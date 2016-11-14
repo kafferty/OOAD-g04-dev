@@ -34,8 +34,8 @@ public class CtCoordinator extends CtAuthenticated {
 	 * @param aPwd The password of the coordinator
 	 * @return The success of the initialisation
 	 */
-	public PtBoolean init(DtCoordinatorID aId,DtLogin aLogin,DtPassword aPwd){
-			super.init(aLogin, aPwd);
+	public PtBoolean init(DtCoordinatorID aId, DtLogin aLogin,DtPassword aPwd, DtPhoneNumber aPhNb){
+			super.init(aLogin, aPwd, aPhNb);
 			id = aId;
 			return new PtBoolean(true); 
 	}

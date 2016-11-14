@@ -182,4 +182,27 @@ public class ActComCompanyImpl extends UnicastRemoteObject implements ActComComp
 			return false;
 		return true;
 	}
+	
+	@Override
+	public PtBoolean oeSendSMS(DtPhoneNumber aDtPhoneNumber, DtSMS aDtSMS) throws RemoteException {
+		Logger log = Log4JUtils.getInstance().getLogger();
+
+		log.info("message ActComCompany.oeSendSMS sent to authencticated");
+		log.info("Phone number: " + aDtPhoneNumber.value.getValue());
+		log.info("SMS: " + aDtSMS.value.getValue());
+		boolean messageSent = false;
+		for (Iterator<ActProxyComCompany> iterator = listeners.iterator(); iterator
+				.hasNext();) {
+			ActProxyComCompany aProxy = iterator.next();
+			try {
+				aProxy.oeSendSMS(aDtPhoneNumber, aDtSMS);
+				messageSent = true;
+			} catch (RemoteException e) {
+				//Most likely the client that created the listener disconnected, so we shall remove it
+				log.error(e);
+				iterator.remove();
+			}
+		}
+		return new PtBoolean(messageSent);
+	}
 }

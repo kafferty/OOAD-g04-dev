@@ -104,6 +104,7 @@ public class ActProxyComCompanyImpl extends UnicastRemoteObject implements
 	/* (non-Javadoc)
 	 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.environment.actors.ActProxyComCompany#ieSmsSend(lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber, lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.secondary.DtSMS)
 	 */
+	
 	public PtBoolean ieSmsSend(DtPhoneNumber aDtPhoneNumber, DtSMS aDtSMS) {
 		Logger log = Log4JUtils.getInstance().getLogger();
 		log.info("message ActComCompany.ieSmsSend received from system");
@@ -142,6 +143,15 @@ public class ActProxyComCompanyImpl extends UnicastRemoteObject implements
 		if (!aActProxComComp.name.equals(this.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public PtBoolean oeSendSMS(DtPhoneNumber aDtPhoneNumber, DtSMS aDtSMS) throws RemoteException {
+		Logger log = Log4JUtils.getInstance().getLogger();
+		log.info("message ActComCompany.oeSendSMS sent to autencicated");
+		log.info("Phone number: " + aDtPhoneNumber.value.getValue());
+		log.info("SMS: " + aDtSMS.value.getValue());
+		return new PtBoolean(true);
 	}
 	
 }

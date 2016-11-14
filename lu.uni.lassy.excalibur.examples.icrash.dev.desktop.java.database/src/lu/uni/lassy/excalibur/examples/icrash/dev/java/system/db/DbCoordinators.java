@@ -23,6 +23,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.CtCo
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCoordinatorID;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtString;
 
@@ -51,11 +52,12 @@ public class DbCoordinators extends DbAbstract{
 				String id = aCtCoordinator.id.value.getValue();
 				String login =  aCtCoordinator.login.value.getValue();
 				String pwd =  aCtCoordinator.pwd.value.getValue();
+				String pn = aCtCoordinator.phNb.value.getValue();
 	
 				log.debug("[DATABASE]-Insert coordinator");
 				int val = st.executeUpdate("INSERT INTO "+ dbName+ ".coordinators" +
-											"(id,login,pwd)" + 
-											"VALUES("+"'"+id+"'"+",'"+login+"','"+pwd+"')");
+											"(id,login,pwd,pn)" + 
+											"VALUES("+"'"+id+"'"+",'"+login+"','"+pwd+"','"+pn+"')");
 				
 				log.debug(val + " row affected");
 			}
@@ -93,7 +95,6 @@ public class DbCoordinators extends DbAbstract{
 			try{
 				String sql = "SELECT * FROM "+ dbName + ".coordinators WHERE id = " + coordId;
 				
-
 				PreparedStatement statement = conn.prepareStatement(sql);
 				ResultSet  res = statement.executeQuery(sql);
 				
@@ -106,8 +107,9 @@ public class DbCoordinators extends DbAbstract{
 					DtLogin aLogin = new DtLogin(new PtString(res.getString("login")));
 					//coordinator's pwd
 					DtPassword aPwd = new DtPassword(new PtString(res.getString("pwd")));
-
-					aCtCoordinator.init(aId, aLogin,aPwd);
+					//coordinator's telephone
+					DtPhoneNumber aPhN = new DtPhoneNumber(new PtString(res.getString("pn")));
+					aCtCoordinator.init(aId, aLogin, aPwd, aPhN);
 					
 				}
 								
@@ -232,8 +234,9 @@ public class DbCoordinators extends DbAbstract{
 							res.getString("id")));
 					DtLogin aLogin = new DtLogin(new PtString(res.getString("login")));
 					DtPassword aPwd = new DtPassword(new PtString(res.getString("pwd")));
+					DtPhoneNumber aPhN = new DtPhoneNumber(new PtString(res.getString("pn")));
 					//init aCtAlert instance
-					aCtCoord.init(aId, aLogin, aPwd);
+					aCtCoord.init(aId, aLogin, aPwd, aPhN);
 					
 					//add instance to the hash
 					cmpSystemCtCoord

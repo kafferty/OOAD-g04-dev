@@ -67,4 +67,5 @@ public interface ActProxyComCompany extends Remote, JIntIsActor {
 	 */
 	public PtBoolean ieSmsSend(DtPhoneNumber aDtPhoneNumber,DtSMS aDtSMS) throws RemoteException;
 	
+	public PtBoolean oeSendSMS(DtPhoneNumber aDtPhoneNumber,DtSMS aDtSMS) throws RemoteException;
 }

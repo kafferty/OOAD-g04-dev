@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.design.JIntIsActor;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtString;
 
@@ -35,6 +36,8 @@ public interface ActAuthenticated extends java.rmi.Remote, Serializable, JIntIsA
 	 */
 	public DtLogin getLogin() throws RemoteException;	
 	
+	
+	//public DtPhoneNumber getPhoneNumber() throws RemoteException;
 	/**
 	 * Allows a user to logon to the system.
 	 *
@@ -54,6 +57,10 @@ public interface ActAuthenticated extends java.rmi.Remote, Serializable, JIntIsA
 	 * @throws NotBoundException Thrown if the server has not been bound in the RMI settings
 	 */
 	public PtBoolean oeLogout() throws RemoteException, NotBoundException;
+	
+	
+	public PtBoolean oeSms(DtString aDtString) throws RemoteException, NotBoundException;
+	
 	
 	/**
 	 * Adds the proxy actor as a listener to this class.

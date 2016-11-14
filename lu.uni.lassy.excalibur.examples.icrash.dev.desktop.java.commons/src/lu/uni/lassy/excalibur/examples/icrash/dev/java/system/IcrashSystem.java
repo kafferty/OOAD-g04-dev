@@ -42,6 +42,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCr
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtHumanKind;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDateAndTime;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtInteger;
@@ -331,6 +332,24 @@ public interface IcrashSystem extends Remote {
 	 */
 	public PtBoolean oeLogin(DtLogin aDtLogin,DtPassword aDtPassword) throws RemoteException; 
 	
+	// METHOD ADDED
+		//	
+		//	
+		//	
+		//	
+		//
+	
+	/**
+	 * Processes a sms for the username specified.
+	 *
+	 * @param aDtSMS code that has to be checked
+	 * @return The success of the method
+	 * @throws RemoteException Thrown if the server is offline
+	 */
+		
+	public PtBoolean oeSms(DtString aDtString) throws RemoteException;
+	
+	public PtBoolean oeGenerateAndSendCode(CtAuthenticated ctAuth) throws RemoteException;
 	/**
 	 * Processes a logout for the current authenticating actor.
 	 *
@@ -348,7 +367,7 @@ public interface IcrashSystem extends Remote {
 	 * @return The success of the method
 	 * @throws RemoteException Thrown if the server is offline
 	 */
-	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID,DtLogin aDtLogin,DtPassword aDtPassword) throws RemoteException; 	
+	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID,DtLogin aDtLogin,DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber) throws RemoteException; 	
 	
 	/**
 	 * Deletes a coordinator with the details specified.

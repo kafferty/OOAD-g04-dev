@@ -33,6 +33,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.model.Message;
 import lu.uni.lassy.excalibur.examples.icrash.dev.view.gui.abstractgui.AbstractAuthGUIController;
 import lu.uni.lassy.excalibur.examples.icrash.dev.view.gui.coordinator.CreateICrashCoordGUI;
 import javafx.scene.layout.GridPane;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -40,10 +41,16 @@ import javafx.event.EventHandler;
  * This is the import section to be replaced by modifications in the ICrash.fxml document from the sample skeleton controller
  */
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -63,11 +70,13 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
     /** The pane containing the logon controls. */
 	@FXML
     private Pane pnAdminLogon;
-
+	
+	
     /** The textfield that allows input of a username for logon. */
     @FXML
     private TextField txtfldAdminUserName;
 
+        
     /** The passwordfield that allows input of a password for logon. */
     @FXML
     private PasswordField psswrdfldAdminPassword;
@@ -75,7 +84,8 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
     /** The button that initiates the login function. */
     @FXML
     private Button bttnAdminLogin;
-
+    
+    
     /** The borderpane that contains the normal controls the user will use. */
     @FXML
     private BorderPane brdpnAdmin;
@@ -109,7 +119,8 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
     void bttnBottomAdminCoordinatorAddACoordinator_OnClick(ActionEvent event) {
     	showCoordinatorScreen(TypeOfEdit.Add);
     }
-
+    
+    
     /**
      * The button event that will show the controls for deleting a coordinator
      *
@@ -139,7 +150,14 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
     void bttnTopLogoff_OnClick(ActionEvent event) {
     	logoff();
     }
-
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    public TextInputDialog dialog;
     /*
      * These are other classes accessed by this controller
      */
@@ -189,7 +207,41 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 				anchrpnCoordinatorDetails.getChildren().remove(i);
 		}
 		
-	}	
+	}
+	
+	
+	
+	@Override
+	protected void smsCodePanes() {
+		Dialog<String> dialog = new Dialog<>();
+		dialog.setTitle("Login Dialog");
+		dialog.setHeaderText("Write your sms code");
+		
+		ButtonType loginButtonType = new ButtonType("Check Code", ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+		TextField smsCode = new TextField();
+		smsCode.setPromptText("sms code");
+		
+		grid.add(new Label("Username:"), 0, 0);
+		grid.add(smsCode, 1, 0);
+
+		dialog.getDialogPane().setContent(grid);
+
+		Platform.runLater(() -> smsCode.requestFocus());
+
+		dialog.setResultConverter(dialogButton -> {
+		    if (dialogButton == loginButtonType) {
+		        checkSms(smsCode.getText());
+		    }
+		    return null;
+		});
+		dialog.show();
+
+	}
 	
 	/**
 	 * Server has gone down.
@@ -218,6 +270,7 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 			anchrpnCoordinatorDetails.getChildren().remove(i);
 		TextField txtfldUserID = new TextField();
 		TextField txtfldUserName = new TextField();
+		TextField txtfldUserPhoneNumber = new TextField();
 		PasswordField psswrdfldPassword = new PasswordField();
 		txtfldUserID.setPromptText("User ID");
 		Button bttntypOK = null;
@@ -228,9 +281,11 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 			bttntypOK = new Button("Create");
 			txtfldUserName.setPromptText("User name");
 			psswrdfldPassword.setPromptText("Password");
+			txtfldUserPhoneNumber.setPromptText("Phone number");
 			grdpn.add(txtfldUserName, 1, 2);
 			grdpn.add(psswrdfldPassword, 1, 3);
-			grdpn.add(bttntypOK, 1, 4);
+			grdpn.add(txtfldUserPhoneNumber, 1, 4);
+			grdpn.add(bttntypOK, 1, 5);
 			break;
 		case Delete:
 			bttntypOK = new Button("Delete");
@@ -248,7 +303,7 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 						DtCoordinatorID coordID = new DtCoordinatorID(new PtString(txtfldUserID.getText()));
 						switch(type){
 						case Add:
-							if (userController.oeAddCoordinator(txtfldUserID.getText(), txtfldUserName.getText(), psswrdfldPassword.getText()).getValue()){
+							if (userController.oeAddCoordinator(txtfldUserID.getText(), txtfldUserName.getText(), psswrdfldPassword.getText(), txtfldUserPhoneNumber.getText()).getValue()){
 								listOfOpenWindows.add(new CreateICrashCoordGUI(coordID, systemstateController.getActCoordinator(txtfldUserName.getText())));
 								anchrpnCoordinatorDetails.getChildren().remove(grdpn);
 							}
@@ -288,8 +343,16 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 	public void logon() {
 		if(txtfldAdminUserName.getText().length() > 0 && psswrdfldAdminPassword.getText().length() > 0){
 			try {
-				if (userController.oeLogin(txtfldAdminUserName.getText(), psswrdfldAdminPassword.getText()).getValue())
-					logonShowPanes(true);
+				if (userController.oeLogin(txtfldAdminUserName.getText(), psswrdfldAdminPassword.getText()).getValue()) {
+					//logonShowPanes(true);
+					smsCodePanes();
+//				if(dialog.getResult() != null)
+//					if (dialog.getResult().length() > 0)
+//						if (userController.oeSms(dialog.getResult()).getValue()){
+//							smsCodePanes(true);
+//							logonShowPanes(true);
+//						}		
+				}
 			}
 			catch (ServerOfflineException | ServerNotBoundException e) {
 				showExceptionErrorMessage(e);
@@ -363,5 +426,20 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 			return new PtBoolean(false);
 		}
 		return new PtBoolean(false);
-	}	
+	}
+
+	@Override
+	public void checkSms(String string) {
+		try {
+			if (userController.oeSms(string).getValue()){
+				
+				logonShowPanes(true);
+			}
+		}
+		catch (ServerOfflineException | ServerNotBoundException e) {
+			showExceptionErrorMessage(e);
+		}	
+	}
+
+		
 }

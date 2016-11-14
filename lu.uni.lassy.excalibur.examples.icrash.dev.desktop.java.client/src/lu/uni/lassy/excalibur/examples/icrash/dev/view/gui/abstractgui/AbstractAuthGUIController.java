@@ -33,6 +33,10 @@ public abstract class AbstractAuthGUIController extends AbstractGUIController im
 	 *
 	 * @param loggedOn Is the user logged onto the system?
 	 */
+	public abstract void checkSms(String string);
+	
 	protected abstract void logonShowPanes(boolean loggedOn);
+	
+	protected abstract void smsCodePanes();
 	
 }

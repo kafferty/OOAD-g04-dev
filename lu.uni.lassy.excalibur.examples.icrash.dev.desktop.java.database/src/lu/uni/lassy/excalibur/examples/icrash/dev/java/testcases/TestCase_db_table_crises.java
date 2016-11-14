@@ -59,7 +59,7 @@ public class TestCase_db_table_crises {
 		
 		//**********************************************************
 		//set up crisis' type
-		EtCrisisType aType = EtCrisisType.small;
+		EtCrisisType aType = EtCrisisType.low;
 		
 		//**********************************************************
 		//set up status

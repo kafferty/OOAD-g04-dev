@@ -39,6 +39,7 @@ public interface ActComCompany extends java.rmi.Remote, Serializable, JIntIsActo
 	 */
 	public String getName() throws RemoteException;
 	
+	public PtBoolean oeSendSMS(DtPhoneNumber aDtPhoneNumber, DtSMS aDtSMS) throws RemoteException;
 	/**
 	 * Initiates an alert creation on the server.
 	 *

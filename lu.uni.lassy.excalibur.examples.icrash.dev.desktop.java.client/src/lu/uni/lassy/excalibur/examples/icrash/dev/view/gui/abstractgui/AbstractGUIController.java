@@ -334,6 +334,7 @@ public abstract class AbstractGUIController implements Initializable {
 		TableColumn<CtCoordinator, String> idCol = new TableColumn<CtCoordinator, String>("ID");
 		TableColumn<CtCoordinator, String> nameCol = new TableColumn<CtCoordinator, String>("Username");
 		TableColumn<CtCoordinator, String> passwordCol = new TableColumn<CtCoordinator, String>("Password");
+		TableColumn<CtCoordinator, String> phoneNumberCol = new TableColumn<CtCoordinator, String>("Phone Number");
 		idCol.setCellValueFactory(new Callback<CellDataFeatures<CtCoordinator, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<CtCoordinator, String> coord) {
 				return new ReadOnlyObjectWrapper<String>(coord.getValue().id.value.getValue());
@@ -349,10 +350,16 @@ public abstract class AbstractGUIController implements Initializable {
 				return new ReadOnlyObjectWrapper<String>(coord.getValue().pwd.value.getValue());
 			}
 		});
+		phoneNumberCol.setCellValueFactory(new Callback<CellDataFeatures<CtCoordinator, String>, ObservableValue<String>>() {
+			public ObservableValue<String> call(CellDataFeatures<CtCoordinator, String> coord) {
+				return new ReadOnlyObjectWrapper<String>(coord.getValue().phNb.value.getValue());
+			}
+		});
 		tblvw.getColumns().add(idCol);
 		tblvw.getColumns().add(nameCol);
 		if (showPassword)
 			tblvw.getColumns().add(passwordCol);
+		tblvw.getColumns().add(phoneNumberCol);
 		setColumnsSameWidth(tblvw);
 	}
 	
@@ -365,6 +372,8 @@ public abstract class AbstractGUIController implements Initializable {
 	public void setUpAdminTables(TableView<CtAdministrator> tblvw, boolean showPassword){
 		TableColumn<CtAdministrator, String> nameCol = new TableColumn<CtAdministrator, String>("Username");
 		TableColumn<CtAdministrator, String> passwordCol = new TableColumn<CtAdministrator, String>("Password");
+		TableColumn<CtAdministrator, String> phoneNumberCol = new TableColumn<CtAdministrator, String>("Phone Number");
+
 		nameCol.setCellValueFactory(new Callback<CellDataFeatures<CtAdministrator, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<CtAdministrator, String> admin) {
 				return new ReadOnlyObjectWrapper<String>(admin.getValue().login.value.getValue());
@@ -375,9 +384,15 @@ public abstract class AbstractGUIController implements Initializable {
 				return new ReadOnlyObjectWrapper<String>(admin.getValue().pwd.value.getValue());
 			}
 		});
+		phoneNumberCol.setCellValueFactory(new Callback<CellDataFeatures<CtAdministrator, String>, ObservableValue<String>>() {
+			public ObservableValue<String> call(CellDataFeatures<CtAdministrator, String> admin) {
+				return new ReadOnlyObjectWrapper<String>(admin.getValue().phNb.value.getValue());
+			}
+		});
 		tblvw.getColumns().add(nameCol);
 		if (showPassword)
 			tblvw.getColumns().add(passwordCol);
+		tblvw.getColumns().add(phoneNumberCol);
 		setColumnsSameWidth(tblvw);
 	}
 	

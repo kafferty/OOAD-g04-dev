@@ -32,6 +32,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLa
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLongitude;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisStatus;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
@@ -143,12 +144,14 @@ public class DbCrises extends DbAbstract {
 					//crisis' type -> [small, medium, huge]
 					String theType = res.getString("type");
 					EtCrisisType aType = null;
-					if (theType.equals(EtCrisisType.small.name()))
-						aType = EtCrisisType.small;
+					if (theType.equals(EtCrisisType.low.name()))
+						aType = EtCrisisType.low;
 					if (theType.equals(EtCrisisType.medium.name()))
 						aType = EtCrisisType.medium;
-					if (theType.equals(EtCrisisType.huge.name()))
-						aType = EtCrisisType.huge;
+					if (theType.equals(EtCrisisType.high.name()))
+						aType = EtCrisisType.high;
+					if (theType.equals(EtCrisisType.critical.name()))
+						aType = EtCrisisType.critical;
 
 					//crisis's status -> [pending, handled, solved, closed]
 					String theStatus = res.getString("status");
@@ -287,15 +290,17 @@ public class DbCrises extends DbAbstract {
 					DtCrisisID aId = new DtCrisisID(new PtString(
 							res.getString("id")));
 
-					//crisis' type -> [small, medium, huge]
+				
 					String theType = res.getString("type");
 					EtCrisisType aType = null;
-					if (theType.equals(EtCrisisType.small.name()))
-						aType = EtCrisisType.small;
+					if (theType.equals(EtCrisisType.low.name()))
+						aType = EtCrisisType.low;
 					if (theType.equals(EtCrisisType.medium.name()))
 						aType = EtCrisisType.medium;
-					if (theType.equals(EtCrisisType.huge.name()))
-						aType = EtCrisisType.huge;
+					if (theType.equals(EtCrisisType.high.name()))
+						aType = EtCrisisType.high;
+					if (theType.equals(EtCrisisType.critical.name()))
+						aType = EtCrisisType.critical;
 
 					//crisis' status -> [pending, handled, solved, closed]
 					String theStatus = res.getString("status");
@@ -350,8 +355,8 @@ public class DbCrises extends DbAbstract {
 					//coordinator's pwd
 					DtPassword aPwd = new DtPassword(new PtString(
 							res.getString("pwd")));
-
-					aCtCoordinator.init(aId1, aLogin, aPwd);
+					DtPhoneNumber aPhN = new DtPhoneNumber(new PtString(res.getString("pn")));
+					aCtCoordinator.init(aId1, aLogin, aPwd, aPhN);
 
 					//add instances to the hash
 					assCtCrisisCtCoordinator.put(aCtCrisis, aCtCoordinator);
@@ -407,12 +412,14 @@ public class DbCrises extends DbAbstract {
 					//crisis' type -> [small, medium, huge]
 					String theType = res.getString("type");
 					EtCrisisType aType = null;
-					if (theType.equals(EtCrisisType.small.name()))
-						aType = EtCrisisType.small;
+					if (theType.equals(EtCrisisType.low.name()))
+						aType = EtCrisisType.low;
 					if (theType.equals(EtCrisisType.medium.name()))
 						aType = EtCrisisType.medium;
-					if (theType.equals(EtCrisisType.huge.name()))
-						aType = EtCrisisType.huge;
+					if (theType.equals(EtCrisisType.high.name()))
+						aType = EtCrisisType.high;
+					if (theType.equals(EtCrisisType.critical.name()))
+						aType = EtCrisisType.critical;
 
 					//crisis' status -> [pending, valid, invalid]
 					String theStatus = res.getString("status");

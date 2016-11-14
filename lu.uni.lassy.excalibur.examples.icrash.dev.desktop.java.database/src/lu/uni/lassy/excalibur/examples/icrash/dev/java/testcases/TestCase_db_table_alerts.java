@@ -106,7 +106,7 @@ public class TestCase_db_table_alerts {
 		log.info("---- test binding Alert with Crisis -------");
 		CtCrisis aCtCrisis = new CtCrisis();
 		DtCrisisID acId = new DtCrisisID(new PtString("1"));
-		EtCrisisType acType = EtCrisisType.small;
+		EtCrisisType acType = EtCrisisType.low;
 		EtCrisisStatus acStatus = EtCrisisStatus.pending;
 		DtComment acComment = new DtComment(new PtString("no report defined, yet"));
 		aCtCrisis.init(acId, acType, acStatus, aDtGPSLocation, aInstant, acComment);

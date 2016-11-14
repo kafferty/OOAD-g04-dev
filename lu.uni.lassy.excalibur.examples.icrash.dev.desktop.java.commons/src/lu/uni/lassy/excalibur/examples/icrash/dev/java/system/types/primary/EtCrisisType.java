@@ -21,17 +21,19 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 public enum EtCrisisType implements JIntIs {
 	
 	/** A small crisis. */
-	small, 
+	low, 
 	/** A medium crisis. */
 	medium, 
 	/** A huge crisis. */
-	huge;
+	high,
+	
+	critical;
 	
 	/* (non-Javadoc)
 	 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.design.DtIs#is()
 	 */
 	public PtBoolean is(){
-		return new PtBoolean(this.name() == EtCrisisType.small.name() ||
-				this.name() == EtCrisisType.medium.name()|| this.name() == EtCrisisType.huge.name());
+		return new PtBoolean(this.name() == EtCrisisType.low.name() ||
+				this.name() == EtCrisisType.medium.name() || this.name() == EtCrisisType.high.name() || this.name() == EtCrisisType.critical.name());
 	}
 }

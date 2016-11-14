@@ -47,6 +47,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.CtCr
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.CtHuman;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.CtState;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtAlertID;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCode;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtComment;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCoordinatorID;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCrisisID;
@@ -63,6 +64,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDateAndTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtInteger;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtSecond;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtInteger;
@@ -93,7 +95,7 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 	/** The current connected communication company that is performing a method on the system.
 	 * This is set by the Actor itself before it performs an oe action*/
 	ActComCompany currentConnectedComCompany;
-
+	DtCode currentAuthenticatedCode;
 	// Messir compositions
 	/**  A hashtable of all administrators in the system, stored by their login as a key. */
 	Hashtable<String, CtAdministrator> cmpSystemCtAdministrator = new Hashtable<String, CtAdministrator>();
@@ -580,7 +582,8 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 			CtAdministrator ctAdmin = new CtAdministrator();
 			DtLogin aLogin = new DtLogin(new PtString(adminName));
 			DtPassword aPwd = new DtPassword(new PtString("7WXC1359"));
-			ctAdmin.init(aLogin, aPwd);
+			DtPhoneNumber aPhNb = new DtPhoneNumber(new PtString("23124"));
+			ctAdmin.init(aLogin, aPwd, aPhNb);
 			/*
 			PostF 7 the association between ctAdministrator and actAdministrator is made of 
 			one couple made of the jointly specified instances.
@@ -685,7 +688,7 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 						+ nextValueForCrisisID_at_pre));
 				ctState.nextValueForCrisisID.value = new PtInteger(
 						ctState.nextValueForCrisisID.value.getValue() + 1);
-				EtCrisisType acType = EtCrisisType.small;
+				EtCrisisType acType = EtCrisisType.low;
 				EtCrisisStatus acStatus = EtCrisisStatus.pending;
 				DtComment acComment = new DtComment(new PtString(
 						"no report defined, yet"));
@@ -1128,10 +1131,13 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 					ActAuthenticated authActorCheck = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
 					log.debug("The logging in actor is " + authActorCheck.getLogin().value.getValue());
 					if (authActorCheck != null && authActorCheck.getLogin().value.getValue().equals(currentRequestingAuthenticatedActor.getLogin().value.getValue())){
-						ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
+						//ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
 						//PostF1
-						PtString aMessage = new PtString("You are logged ! Welcome ...");
-						currentRequestingAuthenticatedActor.ieMessage(aMessage);
+						Logger log = Log4JUtils.getInstance().getLogger();
+						log.info("Login and password are correct. Now its time to sms code");
+						oeGenerateAndSendCode(ctAuthenticatedInstance);
+						//PtString aMessage = new PtString("You are logged ! Welcome ...");
+						//currentRequestingAuthenticatedActor.ieMessage(aMessage);
 						return new PtBoolean(true);
 					}
 				}
@@ -1155,6 +1161,41 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 		return new PtBoolean(false);
 	}
 	
+	@Override
+	public PtBoolean oeGenerateAndSendCode(CtAuthenticated ctAuth) throws RemoteException {
+		Logger log = Log4JUtils.getInstance().getLogger();
+		log.info("we are generating sms code");
+		log.info("current timee" + ctState.clock.toString());
+		currentAuthenticatedCode = new DtCode(ctState.clock);
+		log.info("The code has been created" + currentAuthenticatedCode.getCode().value.getValue());
+		DtSMS aDtSMS = new DtSMS(currentAuthenticatedCode.getCode().value);
+		cmpSystemActComCompany.elements().nextElement().oeSendSMS(ctAuth.phNb, aDtSMS);
+		return new PtBoolean(true);
+	}
+	
+	@Override
+	public PtBoolean oeSms(DtString aDtString) throws RemoteException {
+		// TODO Auto-generated method stub
+		Logger log = Log4JUtils.getInstance().getLogger();
+		log.info("Checking if the sms code is corect or not");
+		log.info("Sms code that was written: " + aDtString.value.getValue());
+	
+		try {
+			CtAuthenticated ctAuthenticatedInstance = cmpSystemCtAuthenticated
+					.get(currentRequestingAuthenticatedActor.getLogin().value.getValue());
+			log.info("currentAuthenticatedCode sms code: " + currentAuthenticatedCode.getCode().value.getValue());
+			if(aDtString.value.getValue().equals(currentAuthenticatedCode.getCode().value.getValue())) {
+				log.info("entered code is correct");
+				ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
+				PtString aMessage = new PtString("You are logged ! Welcome ...");
+				currentRequestingAuthenticatedActor.ieMessage(aMessage);
+				return new PtBoolean(true);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in oeSms..." + ex);
+		}
+		return new PtBoolean(false);
+	}
 	/* (non-Javadoc)
 	 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.system.IcrashSystem#oeLogout()
 	 */
@@ -1190,7 +1231,7 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 	 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.system.IcrashSystem#oeAddCoordinator(lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCoordinatorID, lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin, lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword)
 	 */
 	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID,
-			DtLogin aDtLogin, DtPassword aDtPassword) throws RemoteException {
+			DtLogin aDtLogin, DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber) throws RemoteException {
 		try {
 			//PreP1
 			isSystemStarted();
@@ -1205,7 +1246,7 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 
 			//PostF2
 			CtCoordinator ctCoordinator = new CtCoordinator();
-			ctCoordinator.init(aDtCoordinatorID, aDtLogin, aDtPassword);
+			ctCoordinator.init(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber);
 			DbCoordinators.insertCoordinator(ctCoordinator);
 			
 			
@@ -1273,7 +1314,7 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 			if (ctAuth != null && ctAuth instanceof CtCoordinator){
 				CtCoordinator aCtCoordinator = (CtCoordinator)ctAuth;
 				CtCoordinator oldCoordinator = new CtCoordinator();
-				oldCoordinator.init(aCtCoordinator.id, aCtCoordinator.login, aCtCoordinator.pwd);
+				oldCoordinator.init(aCtCoordinator.id, aCtCoordinator.login, aCtCoordinator.pwd, aCtCoordinator.phNb);
 				aCtCoordinator.update(aDtLogin, aDtPassword);
 				if (DbCoordinators.updateCoordinator(aCtCoordinator).getValue()){
 					cmpSystemCtAuthenticated.remove(oldCoordinator.login.value.getValue());

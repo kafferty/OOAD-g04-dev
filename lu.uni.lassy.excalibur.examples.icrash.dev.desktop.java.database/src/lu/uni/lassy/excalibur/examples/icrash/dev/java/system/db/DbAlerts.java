@@ -450,12 +450,14 @@ public class DbAlerts extends DbAbstract {
 					//crisis' type -> [small, medium, huge]
 					String theCrisisType = res.getString("crises.type");
 					EtCrisisType aCrisisType = null;
-					if (theCrisisType.equals(EtCrisisType.small.name()))
-						aCrisisType = EtCrisisType.small;
+					if (theCrisisType.equals(EtCrisisType.low.name()))
+						aCrisisType = EtCrisisType.low;
 					if (theCrisisType.equals(EtCrisisType.medium.name()))
 						aCrisisType = EtCrisisType.medium;
-					if (theCrisisType.equals(EtCrisisType.huge.name()))
-						aCrisisType = EtCrisisType.huge;
+					if (theCrisisType.equals(EtCrisisType.high.name()))
+						aCrisisType = EtCrisisType.high;
+					if (theCrisisType.equals(EtCrisisType.critical.name()))
+						aCrisisType = EtCrisisType.critical;
 
 					//crisis's status -> [pending, handled, solved, closed]
 					String theCrisisStatus = res.getString("crises.status");

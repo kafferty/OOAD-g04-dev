@@ -38,8 +38,10 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.view.gui.abstractgui.AbstractA
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -52,6 +54,7 @@ import javafx.stage.Modality;
  * This is the import section to be replaced by modifications in the ICrash.fxml document from the sample skeleton controller
  */
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
@@ -453,7 +456,7 @@ public class ICrashCoordGUIController extends AbstractAuthGUIController {
 			try {
 				if (userController.oeLogin(txtfldCoordLogonUserName.getText(), psswrdfldCoordLogonPassword.getText()).getValue()){
 					if (userController.getUserType() == UserType.Coordinator){
-						logonShowPanes(true);
+						smsCodePanes();
 					}
 				}
 			}
@@ -587,5 +590,50 @@ public class ICrashCoordGUIController extends AbstractAuthGUIController {
 			return new PtBoolean(false);
 		}
 		return new PtBoolean(true);
+	}
+
+	@Override
+	protected void smsCodePanes() {
+		// TODO Auto-generated method stub
+		Dialog<String> dialog = new Dialog<>();
+		dialog.setTitle("Login Dialog");
+		dialog.setHeaderText("Write your sms code");
+		
+		ButtonType loginButtonType = new ButtonType("Check Code", ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+		TextField smsCode = new TextField();
+		smsCode.setPromptText("sms code");
+		
+		grid.add(new Label("Username:"), 0, 0);
+		grid.add(smsCode, 1, 0);
+
+		dialog.getDialogPane().setContent(grid);
+
+		Platform.runLater(() -> smsCode.requestFocus());
+
+		dialog.setResultConverter(dialogButton -> {
+		    if (dialogButton == loginButtonType) {
+		        checkSms(smsCode.getText());
+		    }
+		    return null;
+		});
+		dialog.show();
+	}
+
+	@Override
+	public void checkSms(String string) {
+		try {
+			if (userController.oeSms(string).getValue()){
+				
+				logonShowPanes(true);
+			}
+		}
+		catch (ServerOfflineException | ServerNotBoundException e) {
+			showExceptionErrorMessage(e);
+		}	
 	}
 }
