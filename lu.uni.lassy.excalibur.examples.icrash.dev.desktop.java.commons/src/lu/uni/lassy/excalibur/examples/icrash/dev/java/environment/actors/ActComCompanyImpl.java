@@ -24,6 +24,8 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.IcrashSystem;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtComment;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtGPSLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisStatus;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtHumanKind;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.secondary.DtSMS;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
@@ -80,7 +82,7 @@ public class ActComCompanyImpl extends UnicastRemoteObject implements ActComComp
 	 */
 	synchronized public PtBoolean oeAlert(EtHumanKind aEtHumanKind,
 			DtDate aDtDate, DtTime aDtTime, DtPhoneNumber aDtPhoneNumber,
-			DtGPSLocation aDtGPSLocation, DtComment aDtComment)
+			DtGPSLocation aDtGPSLocation, DtComment aDtComment, EtCrisisType aEtCrisisType)
 			throws RemoteException, NotBoundException {
 
 		Logger log = Log4JUtils.getInstance().getLogger();
@@ -96,7 +98,7 @@ public class ActComCompanyImpl extends UnicastRemoteObject implements ActComComp
 
 		log.info("message ActComCompany.oeAlert sent to system");
 		PtBoolean res = iCrashSys_Server.oeAlert(aEtHumanKind, aDtDate,
-				aDtTime, aDtPhoneNumber, aDtGPSLocation, aDtComment);
+				aDtTime, aDtPhoneNumber, aDtGPSLocation, aDtComment, aEtCrisisType);
 
 		if (res.getValue() == true)
 			log.info("operation oeAlert successfully executed by the system");

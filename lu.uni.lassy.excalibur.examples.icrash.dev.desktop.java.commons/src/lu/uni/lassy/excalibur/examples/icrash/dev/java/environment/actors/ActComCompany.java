@@ -20,6 +20,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.design.JIntI
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtComment;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtGPSLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtHumanKind;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.secondary.DtSMS;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
@@ -55,7 +56,7 @@ public interface ActComCompany extends java.rmi.Remote, Serializable, JIntIsActo
 	 */
 	public PtBoolean oeAlert(EtHumanKind aEtHumanKind,DtDate aDtDate,
 			DtTime aDtTime,DtPhoneNumber aDtPhoneNumber,
-			DtGPSLocation aDtGPSLocation,DtComment aDtComment) throws RemoteException, NotBoundException;
+			DtGPSLocation aDtGPSLocation,DtComment aDtComment, EtCrisisType aEtCrisisType) throws RemoteException, NotBoundException;
 
 	/**
 	 * Sends a message to the client side actor with details of if the alert was logged or not.

@@ -26,6 +26,8 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCo
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtGeographicalLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.utils.Log4JUtils;
@@ -56,20 +58,89 @@ public class AdminController extends AbstractUserController {
 	 * @throws ServerNotBoundException is only thrown when attempting to access a server which has no current binding. This shouldn't happen, but you never know!
 	 * @throws IncorrectFormatException is thrown when a Dt/Et information type does not match the is() method specified in the specification
 	 */
-	public PtBoolean oeAddCoordinator(String coordinatorID, String login, String password, String phoneNumber) throws ServerOfflineException, ServerNotBoundException, IncorrectFormatException{
+	public PtBoolean oeAddCoordinator(String coordinatorID, String login, String password, String phoneNumber, String georLocation, String crisisType) throws ServerOfflineException, ServerNotBoundException, IncorrectFormatException{
 		if (getUserType() == UserType.Admin){
 			ActProxyAdministratorImpl actorAdmin = (ActProxyAdministratorImpl)getAuth();
 			DtCoordinatorID aDtCoordinatorID = new DtCoordinatorID(new PtString(coordinatorID));
 			DtLogin aDtLogin = new DtLogin(new PtString(login));
 			DtPassword aDtPassword = new DtPassword(new PtString(password));
 			DtPhoneNumber aDtPhoneNumber = new DtPhoneNumber(new PtString(phoneNumber));
+			EtGeographicalLocation aGeoLoc;
+			if(EtGeographicalLocation.central.name().equals(georLocation))
+				aGeoLoc = EtGeographicalLocation.central;
+			else 
+				if (EtGeographicalLocation.north_eastern.name().equals(georLocation))
+					aGeoLoc = EtGeographicalLocation.north_eastern;
+				else
+					if (EtGeographicalLocation.north_western.name().equals(georLocation))
+						aGeoLoc = EtGeographicalLocation.north_western;
+					else 
+						if (EtGeographicalLocation.south_eastern.name().equals(georLocation))
+							aGeoLoc = EtGeographicalLocation.south_eastern;
+						else aGeoLoc = EtGeographicalLocation.south_western;
+			EtCrisisType aCrTy;
+			if(EtCrisisType.critical.name().equals(crisisType))
+				aCrTy = EtCrisisType.critical;
+			else
+				if(EtCrisisType.high.name().equals(crisisType))
+					aCrTy = EtCrisisType.high;
+				else
+					if(EtCrisisType.medium.name().equals(crisisType))
+						aCrTy = EtCrisisType.medium;
+					else aCrTy = EtCrisisType.low;
 			Hashtable<JIntIs, String> ht = new Hashtable<JIntIs, String>();
 			ht.put(aDtCoordinatorID, aDtCoordinatorID.value.getValue());
 			ht.put(aDtLogin, aDtLogin.value.getValue());
 			ht.put(aDtPassword, aDtPassword.value.getValue());
 			ht.put(aDtPhoneNumber, aDtPhoneNumber.value.getValue());
+			ht.put(aGeoLoc, aGeoLoc.name());
+			ht.put(aCrTy, aCrTy.name());
 			try {
-				return actorAdmin.oeAddCoordinator(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber);
+				return actorAdmin.oeAddCoordinator(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber, aGeoLoc, aCrTy);
+			} catch (RemoteException e) {
+				Log4JUtils.getInstance().getLogger().error(e);
+				throw new ServerOfflineException();
+			} catch (NotBoundException e) {
+				Log4JUtils.getInstance().getLogger().error(e);
+				throw new ServerNotBoundException();
+			}
+		}
+		return new PtBoolean(false);
+	}
+	
+	public PtBoolean oeEditCoordinator(String coordinatorID, String georLocation, String crisisType) throws ServerOfflineException, ServerNotBoundException, IncorrectFormatException {
+		if (getUserType() == UserType.Admin){
+			ActProxyAdministratorImpl actorAdmin = (ActProxyAdministratorImpl)getAuth();
+			DtCoordinatorID aDtCoordinatorID = new DtCoordinatorID(new PtString(coordinatorID));
+			EtGeographicalLocation aGeoLoc;
+			if(EtGeographicalLocation.central.name().equals(georLocation))
+				aGeoLoc = EtGeographicalLocation.central;
+			else 
+				if (EtGeographicalLocation.north_eastern.name().equals(georLocation))
+					aGeoLoc = EtGeographicalLocation.north_eastern;
+				else
+					if (EtGeographicalLocation.north_western.name().equals(georLocation))
+						aGeoLoc = EtGeographicalLocation.north_western;
+					else 
+						if (EtGeographicalLocation.south_eastern.name().equals(georLocation))
+							aGeoLoc = EtGeographicalLocation.south_eastern;
+						else aGeoLoc = EtGeographicalLocation.south_western;
+			EtCrisisType aCrTy;
+			if(EtCrisisType.critical.name().equals(crisisType))
+				aCrTy = EtCrisisType.critical;
+			else
+				if(EtCrisisType.high.name().equals(crisisType))
+					aCrTy = EtCrisisType.high;
+				else
+					if(EtCrisisType.medium.name().equals(crisisType))
+						aCrTy = EtCrisisType.medium;
+					else aCrTy = EtCrisisType.low;
+			Hashtable<JIntIs, String> ht = new Hashtable<JIntIs, String>();
+			ht.put(aDtCoordinatorID, aDtCoordinatorID.value.getValue());
+			ht.put(aGeoLoc, aGeoLoc.name());
+			ht.put(aCrTy, aCrTy.name());
+			try {
+				return actorAdmin.oeEditCoordinator(aDtCoordinatorID, aGeoLoc, aCrTy);
 			} catch (RemoteException e) {
 				Log4JUtils.getInstance().getLogger().error(e);
 				throw new ServerOfflineException();

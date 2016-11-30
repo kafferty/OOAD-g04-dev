@@ -66,6 +66,8 @@ public class TestCase_db_table_alerts {
 		//**********************************************************
 		//set up status
 		EtAlertStatus aStatus = EtAlertStatus.pending;
+		
+		EtCrisisType aEtCrisisType = EtCrisisType.low;
 
 		//**********************************************************
 		//set up location
@@ -90,7 +92,7 @@ public class TestCase_db_table_alerts {
 		
 		
 		CtAlert aCtAlert = new CtAlert();
-		aCtAlert.init(aId, aStatus,aDtGPSLocation,aInstant, aDtComment);
+		aCtAlert.init(aId, aStatus,aDtGPSLocation,aInstant, aDtComment, aEtCrisisType);
 		
 		DbAlerts.insertAlert(aCtAlert);
 		

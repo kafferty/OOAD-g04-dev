@@ -26,6 +26,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtGP
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLatitude;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLongitude;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtAlertStatus;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDateAndTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtTime;
@@ -62,7 +63,7 @@ public class TestCase_db_table_alerts2 {
 		//**********************************************************
 		//set up status
 		EtAlertStatus aStatus = EtAlertStatus.pending;
-
+		EtCrisisType aEtCrisisType = EtCrisisType.low;
 		//**********************************************************
 		//set up location
 		DtLatitude aDtLatitude = new DtLatitude(new PtReal(49.627675));
@@ -86,7 +87,7 @@ public class TestCase_db_table_alerts2 {
 		
 		
 		CtAlert aCtAlert = new CtAlert();
-		aCtAlert.init(aId, aStatus,aDtGPSLocation,aInstant, aDtComment);
+		aCtAlert.init(aId, aStatus,aDtGPSLocation,aInstant, aDtComment, aEtCrisisType);
 		
 		DbAlerts.insertAlert(aCtAlert);
 		

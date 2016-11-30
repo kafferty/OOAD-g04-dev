@@ -32,6 +32,7 @@ public abstract class CtAuthenticated implements Serializable {
 	/**  A check to see if the current Ct class is considered logged into the system. */
 	public PtBoolean vpIsLogged;	
 	
+	public PtBoolean vpIsLoggedStep1;
 	/**  The user's phone number. */
 	public DtPhoneNumber phNb;
 	
@@ -47,6 +48,7 @@ public abstract class CtAuthenticated implements Serializable {
 			pwd = aPwd;
 			phNb = aPhNb;
 			vpIsLogged = new PtBoolean(false);
+			vpIsLoggedStep1 = new PtBoolean(false);
 			return new PtBoolean(true); 
 	}
 	

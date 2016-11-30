@@ -41,6 +41,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.controller.exceptions.ServerOf
 import lu.uni.lassy.excalibur.examples.icrash.dev.controller.exceptions.StringToNumberException;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.environment.actors.ActComCompany;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.design.JIntIsActor;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtHumanKind; 
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
@@ -113,6 +114,22 @@ public class CommunicationCompanyGUIController extends AbstractGUIController imp
 				}
 			}
 		});
+		
+		Label lblCrisisType = new Label("Type of crisis:");
+		ListView<EtCrisisType> lstvwCrisisType = new ListView<EtCrisisType>();
+		lstvwCrisisType.setMinWidth(width);
+		lstvwCrisisType.setMaxWidth(width);
+		lstvwCrisisType.setMaxHeight(50);
+		lstvwCrisisType.setItems( FXCollections.observableArrayList( EtCrisisType.values()));
+		lstvwCrisisType.setOnEditCommit(new EventHandler<ListView.EditEvent<EtCrisisType>>() {
+			@Override
+			public void handle(EditEvent<EtCrisisType> event) {
+				if (lstvwCrisisType.getSelectionModel().getSelectedItems().size() > 1){
+					lstvwCrisisType.getSelectionModel().clearSelection();
+					lstvwCrisisType.getSelectionModel().select(event.getNewValue());
+				}
+			}
+		});
 		DatePicker dtpckr = getDatePicker(ICrashUtils.getCurrentDate(), width);
 		DtTime aDtTime = ICrashUtils.getCurrentTime();
 		TextField txtfldCurrentSetHour = new TextField();
@@ -146,6 +163,8 @@ public class CommunicationCompanyGUIController extends AbstractGUIController imp
 		Button bttnClear = new Button("Reset form");
 		GridPane grdpn = new GridPane();
 		grdpn.add(lblPersonType, 1, 1);
+		grdpn.add(lblCrisisType, 4, 1);
+		grdpn.add(lstvwCrisisType, 4, 2, 2, 1);
 		grdpn.add(lstvwPersonType, 1, 2, 2, 1);
 		grdpn.add(lblDate, 1, 3);
 		grdpn.add(dtpckr, 1, 4, 2, 1);
@@ -172,7 +191,7 @@ public class CommunicationCompanyGUIController extends AbstractGUIController imp
 							dtpckr.getValue().getYear(), dtpckr.getValue().getMonthValue(), dtpckr.getValue().getDayOfMonth(),
 							lstvwPersonType.getSelectionModel().getSelectedItem(), txtfldPhone.getText(),
 							txtfldLatitude.getText(), txtfldLongitude.getText(),
-							txtarComment.getText()).getValue())
+							txtarComment.getText(),lstvwCrisisType.getSelectionModel().getSelectedItem()).getValue())
 						resetForm(grdpn);
 					else
 						showWarningMessage("Error", "Unable to create alert");
@@ -201,9 +220,9 @@ public class CommunicationCompanyGUIController extends AbstractGUIController imp
 	 * @param comment The message sent by the human about the accident
 	 * @return The success of the method
 	 */
-	public PtBoolean checkDataAndSend(double hour, double minute, double second, int year, int month, int day, EtHumanKind humanKind, String phoneNumber, String latitude, String longitude, String comment){
+	public PtBoolean checkDataAndSend(double hour, double minute, double second, int year, int month, int day, EtHumanKind humanKind, String phoneNumber, String latitude, String longitude, String comment, EtCrisisType aEtCrisisType){
 		try {
-			return comcompanyController.oeAlert(humanKind, year, month, day, (int)hour, (int)minute, (int)second, phoneNumber, latitude, longitude, comment);
+			return comcompanyController.oeAlert(humanKind, year, month, day, (int)hour, (int)minute, (int)second, phoneNumber, latitude, longitude, comment, aEtCrisisType);
 		} catch (ServerOfflineException | InvalidHumanKindException | ServerNotBoundException e) {
 			showExceptionErrorMessage(e);
 		} catch (IncorrectFormatException e) {

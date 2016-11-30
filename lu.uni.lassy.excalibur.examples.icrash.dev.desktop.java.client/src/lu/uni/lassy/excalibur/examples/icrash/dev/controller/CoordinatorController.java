@@ -27,6 +27,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCo
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCrisisID;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtAlertStatus;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisStatus;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.utils.Log4JUtils;
@@ -66,6 +67,26 @@ public class CoordinatorController extends AbstractUserController {
 			ActProxyCoordinator actCoord = (ActProxyCoordinator)this.getAuth();
 			try {
 				return actCoord.oeSetCrisisStatus(aDtCrisisID, status);
+			} catch (RemoteException e) {
+				Log4JUtils.getInstance().getLogger().error(e);
+				throw new ServerOfflineException();
+			} catch (NotBoundException e) {
+				Log4JUtils.getInstance().getLogger().error(e);
+				throw new ServerNotBoundException();
+			}
+		}
+		return new PtBoolean(false);
+	}
+	
+	public PtBoolean changeCrisisType(String crisisID, EtCrisisType status) throws ServerNotBoundException, ServerOfflineException, IncorrectFormatException{
+		DtCrisisID aDtCrisisID = new DtCrisisID(new PtString(crisisID));
+		Hashtable<JIntIs, String> ht = new Hashtable<JIntIs, String>();
+		ht.put(aDtCrisisID, aDtCrisisID.value.getValue());
+		ht.put(status, status.name());
+		if (this.getUserType() == UserType.Coordinator){
+			ActProxyCoordinator actCoord = (ActProxyCoordinator)this.getAuth();
+			try {
+				return actCoord.oeSetCrisisType(aDtCrisisID, status);
 			} catch (RemoteException e) {
 				Log4JUtils.getInstance().getLogger().error(e);
 				throw new ServerOfflineException();

@@ -40,7 +40,7 @@ public class ActCoordinatorImpl extends ActAuthenticatedImpl implements ActCoord
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 227L;
-
+	
 	/**
 	 * Instantiates a new server side actor of type coordinator.
 	 *
@@ -50,6 +50,7 @@ public class ActCoordinatorImpl extends ActAuthenticatedImpl implements ActCoord
 	public ActCoordinatorImpl(DtLogin n) throws RemoteException {
 		super(n);
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.environment.actors.ActCoordinator#oeGetCrisisSet(lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisStatus)
@@ -332,4 +333,5 @@ public class ActCoordinatorImpl extends ActAuthenticatedImpl implements ActCoord
 			log.info("operation oeGetAlertsSet successfully executed by the system");
 		return res;
 	}
+	
 }

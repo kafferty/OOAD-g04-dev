@@ -24,6 +24,8 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCo
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtGeographicalLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtString;
 
@@ -53,12 +55,13 @@ public class DbCoordinators extends DbAbstract{
 				String login =  aCtCoordinator.login.value.getValue();
 				String pwd =  aCtCoordinator.pwd.value.getValue();
 				String pn = aCtCoordinator.phNb.value.getValue();
+				String geoLoc = aCtCoordinator.geographicalLocation.name();
+				String crTy = aCtCoordinator.crisisType.name();
 	
 				log.debug("[DATABASE]-Insert coordinator");
 				int val = st.executeUpdate("INSERT INTO "+ dbName+ ".coordinators" +
-											"(id,login,pwd,pn)" + 
-											"VALUES("+"'"+id+"'"+",'"+login+"','"+pwd+"','"+pn+"')");
-				
+											"(id,login,pwd,pn,geoLoc,crTy)" + 
+											"VALUES("+"'"+id+"'"+",'"+login+"','"+pwd+"','"+pn+"','"+geoLoc+"','"+crTy+"')");
 				log.debug(val + " row affected");
 			}
 			catch (SQLException s){
@@ -109,7 +112,30 @@ public class DbCoordinators extends DbAbstract{
 					DtPassword aPwd = new DtPassword(new PtString(res.getString("pwd")));
 					//coordinator's telephone
 					DtPhoneNumber aPhN = new DtPhoneNumber(new PtString(res.getString("pn")));
-					aCtCoordinator.init(aId, aLogin, aPwd, aPhN);
+					EtGeographicalLocation aGeoLoc;
+					if(EtGeographicalLocation.central.name().equals(res.getString("GeoLoc")))
+						aGeoLoc = EtGeographicalLocation.central;
+					else 
+						if (EtGeographicalLocation.north_eastern.name().equals(res.getString("GeoLoc")))
+							aGeoLoc = EtGeographicalLocation.north_eastern;
+						else
+							if (EtGeographicalLocation.north_western.name().equals(res.getString("GeoLoc")))
+								aGeoLoc = EtGeographicalLocation.north_western;
+							else 
+								if (EtGeographicalLocation.south_eastern.name().equals(res.getString("GeoLoc")))
+									aGeoLoc = EtGeographicalLocation.south_eastern;
+								else aGeoLoc = EtGeographicalLocation.south_western;
+					EtCrisisType aCrTy;
+					if(EtCrisisType.critical.name().equals(res.getString("crTy")))
+						aCrTy = EtCrisisType.critical;
+					else
+						if(EtCrisisType.high.name().equals(res.getString("crTy")))
+							aCrTy = EtCrisisType.high;
+						else
+							if(EtCrisisType.medium.name().equals(res.getString("crTy")))
+								aCrTy = EtCrisisType.medium;
+							else aCrTy = EtCrisisType.low;
+					aCtCoordinator.init(aId, aLogin, aPwd, aPhN, aGeoLoc, aCrTy);
 					
 				}
 								
@@ -184,8 +210,11 @@ public class DbCoordinators extends DbAbstract{
 				String id = aCtCoordinator.id.value.getValue();
 				String login =  aCtCoordinator.login.value.getValue();
 				String pwd =  aCtCoordinator.pwd.value.getValue();
+				String pn = aCtCoordinator.phNb.value.getValue();
+				String geoLoc = aCtCoordinator.geographicalLocation.toString();
+				String crTy = aCtCoordinator.crisisType.toString();
 				String statement = "UPDATE "+ dbName+ ".coordinators" +
-						" SET pwd='"+pwd+"',  login='"+ login+"' " +
+						" SET pwd='"+pwd+"',  login='"+ login+"', pn='"+pn+"', geoLoc='"+geoLoc+"', crTy='"+crTy+"' " +
 						"WHERE id='"+id+"'";
 				int val = st.executeUpdate(statement);
 				log.debug(val+" row updated");
@@ -235,8 +264,31 @@ public class DbCoordinators extends DbAbstract{
 					DtLogin aLogin = new DtLogin(new PtString(res.getString("login")));
 					DtPassword aPwd = new DtPassword(new PtString(res.getString("pwd")));
 					DtPhoneNumber aPhN = new DtPhoneNumber(new PtString(res.getString("pn")));
+					EtGeographicalLocation aGeoLoc;
+					if(EtGeographicalLocation.central.name().equals(res.getString("GeoLoc")))
+						aGeoLoc = EtGeographicalLocation.central;
+					else 
+						if (EtGeographicalLocation.north_eastern.name().equals(res.getString("GeoLoc")))
+							aGeoLoc = EtGeographicalLocation.north_eastern;
+						else
+							if (EtGeographicalLocation.north_western.name().equals(res.getString("GeoLoc")))
+								aGeoLoc = EtGeographicalLocation.north_western;
+							else 
+								if (EtGeographicalLocation.south_eastern.name().equals(res.getString("GeoLoc")))
+									aGeoLoc = EtGeographicalLocation.south_eastern;
+								else aGeoLoc = EtGeographicalLocation.south_western;
+					EtCrisisType aCrTy;
+					if(EtCrisisType.critical.name().equals(res.getString("crTy")))
+						aCrTy = EtCrisisType.critical;
+					else
+						if(EtCrisisType.high.name().equals(res.getString("crTy")))
+							aCrTy = EtCrisisType.high;
+						else
+							if(EtCrisisType.medium.name().equals(res.getString("crTy")))
+								aCrTy = EtCrisisType.medium;
+							else aCrTy = EtCrisisType.low;
 					//init aCtAlert instance
-					aCtCoord.init(aId, aLogin, aPwd, aPhN);
+					aCtCoord.init(aId, aLogin, aPwd, aPhN, aGeoLoc, aCrTy);
 					
 					//add instance to the hash
 					cmpSystemCtCoord

@@ -103,6 +103,7 @@ public class DbAlerts extends DbAbstract {
 
 				String id = aCtAlert.id.value.getValue();
 				String status = aCtAlert.status.toString();
+				String crisisType = aCtAlert.crisisType.name();
 				double latitude = aCtAlert.location.latitude.value.getValue();
 				double longitude = aCtAlert.location.longitude.value.getValue();
 
@@ -124,10 +125,10 @@ public class DbAlerts extends DbAbstract {
 
 				log.debug("[DATABASE]-Insert alert");
 				int val = st.executeUpdate("INSERT INTO " + dbName + ".alerts"
-						+ "(id,status,latitude,longitude,instant,comment)"
+						+ "(id,status,latitude,longitude,instant,comment,crisisTy)"
 						+ "VALUES(" + "'" + id + "'" + ",'" + status + "', "
 						+ latitude + ", " + longitude + ", '" + instant + "','"
-						+ comment + "')");
+						+ comment + "','"+crisisType +"')");
 
 				log.debug(val + " row affected");
 			} catch (SQLException s) {
@@ -183,7 +184,17 @@ public class DbAlerts extends DbAbstract {
 						aStatus = EtAlertStatus.invalid;
 					if (theStatus.equals(EtAlertStatus.valid.name()))
 						aStatus = EtAlertStatus.valid;
-
+					
+					EtCrisisType aCrisisType = null;
+					String crisisTy= res.getString("crisisTy");
+					if (crisisTy.equals(EtCrisisType.critical.name()))
+						aCrisisType = EtCrisisType.critical;
+					if (crisisTy.equals(EtCrisisType.low.name()))
+						aCrisisType = EtCrisisType.low;
+					if (crisisTy.equals(EtCrisisType.medium.name()))
+						aCrisisType = EtCrisisType.medium;
+					if (crisisTy.equals(EtCrisisType.high.name()))
+						aCrisisType = EtCrisisType.high;
 					//alert's location
 					DtLatitude aDtLatitude = new DtLatitude(new PtReal(
 							res.getDouble("latitude")));
@@ -212,7 +223,7 @@ public class DbAlerts extends DbAbstract {
 							res.getString("comment")));
 
 					aCtAlert.init(aId, aStatus, aDtGPSLocation, aInstant,
-							aDtComment);
+							aDtComment, aCrisisType);
 
 				}
 
@@ -313,7 +324,20 @@ public class DbAlerts extends DbAbstract {
 						aStatus = EtAlertStatus.invalid;
 					if (theStatus.equals(EtAlertStatus.valid.name()))
 						aStatus = EtAlertStatus.valid;
-
+					
+					
+					EtCrisisType aCrisisType = null;
+					String crisisTy= res.getString("crisisTy");
+					if (crisisTy.equals(EtCrisisType.critical.name()))
+						aCrisisType = EtCrisisType.critical;
+					if (crisisTy.equals(EtCrisisType.low.name()))
+						aCrisisType = EtCrisisType.low;
+					if (crisisTy.equals(EtCrisisType.medium.name()))
+						aCrisisType = EtCrisisType.medium;
+					if (crisisTy.equals(EtCrisisType.high.name()))
+						aCrisisType = EtCrisisType.high;
+					
+					
 					//alert's location
 					DtLatitude aDtLatitude = new DtLatitude(new PtReal(
 							res.getDouble("latitude")));
@@ -343,7 +367,7 @@ public class DbAlerts extends DbAbstract {
 
 					//init aCtAlert instance
 					aCtAlert.init(aId, aStatus, aDtGPSLocation, aInstant,
-							aDtComment);
+							aDtComment, aCrisisType);
 
 					//add instance to the hash
 					cmpSystemCtAlert
@@ -409,7 +433,17 @@ public class DbAlerts extends DbAbstract {
 						aStatus = EtAlertStatus.invalid;
 					if (theStatus.equals(EtAlertStatus.valid.name()))
 						aStatus = EtAlertStatus.valid;
-
+					
+					EtCrisisType aAlertCrisisType = null;
+					String crisisTy= res.getString("alerts.crisisTy");
+					if (crisisTy.equals(EtCrisisType.critical.name()))
+						aAlertCrisisType = EtCrisisType.critical;
+					if (crisisTy.equals(EtCrisisType.low.name()))
+						aAlertCrisisType = EtCrisisType.low;
+					if (crisisTy.equals(EtCrisisType.medium.name()))
+						aAlertCrisisType = EtCrisisType.medium;
+					if (crisisTy.equals(EtCrisisType.high.name()))
+						aAlertCrisisType = EtCrisisType.high;
 					//alert's location
 					DtLatitude aDtLatitude = new DtLatitude(new PtReal(
 							res.getDouble("alerts.latitude")));
@@ -439,7 +473,7 @@ public class DbAlerts extends DbAbstract {
 
 					//init aCtAlert instance
 					aCtAlert.init(aId, aStatus, aDtGPSLocation, aInstant,
-							aDtComment);
+							aDtComment, aAlertCrisisType);
 
 					//*************************************
 					aCtCrisis = new CtCrisis();
@@ -565,7 +599,16 @@ public class DbAlerts extends DbAbstract {
 						aStatus = EtAlertStatus.invalid;
 					if (theStatus.equals(EtAlertStatus.valid.name()))
 						aStatus = EtAlertStatus.valid;
-
+					EtCrisisType aAlertCrisisType = null;
+					String crisisTy= res.getString("alerts.crisisTy");
+					if (crisisTy.equals(EtCrisisType.critical.name()))
+						aAlertCrisisType = EtCrisisType.critical;
+					if (crisisTy.equals(EtCrisisType.low.name()))
+						aAlertCrisisType = EtCrisisType.low;
+					if (crisisTy.equals(EtCrisisType.medium.name()))
+						aAlertCrisisType = EtCrisisType.medium;
+					if (crisisTy.equals(EtCrisisType.high.name()))
+						aAlertCrisisType = EtCrisisType.high;
 					//alert's location
 					DtLatitude aDtLatitude = new DtLatitude(new PtReal(
 							res.getDouble("alerts.latitude")));
@@ -595,7 +638,7 @@ public class DbAlerts extends DbAbstract {
 
 					//init aCtAlert instance
 					aCtAlert.init(aId, aStatus, aDtGPSLocation, aInstant,
-							aDtComment);
+							aDtComment, aAlertCrisisType);
 
 					//*************************************
 					aCtHuman = new CtHuman();
@@ -764,12 +807,13 @@ public class DbAlerts extends DbAbstract {
 				String sql = "UPDATE "
 						+ dbName
 						+ ".alerts SET `status` = ?, `latitude` = ?, `longitude` = ?,"
-						+ " `instant` = ?, `comment` = ? WHERE id = ?";
+						+ " `instant` = ?, `comment` = ?, `crisisTy` = ? WHERE id = ?";
 				String id = aCtAlert.id.value.getValue();
 				String status = aCtAlert.status.toString();
+				String crisisTy = aCtAlert.crisisType.toString();
 				double latitude = aCtAlert.location.latitude.value.getValue();
 				double longitude = aCtAlert.location.longitude.value.getValue();
-
+				
 				int year = aCtAlert.instant.date.year.value.getValue();
 				int month = aCtAlert.instant.date.month.value.getValue();
 				int day = aCtAlert.instant.date.day.value.getValue();
@@ -793,6 +837,7 @@ public class DbAlerts extends DbAbstract {
 				statement.setString(4, instant);
 				statement.setString(5, comment);
 				statement.setString(6, id);
+				statement.setString(7, crisisTy);
 				int rows = statement.executeUpdate();
 				log.debug(rows + " row affected");
 			} catch (SQLException s) {

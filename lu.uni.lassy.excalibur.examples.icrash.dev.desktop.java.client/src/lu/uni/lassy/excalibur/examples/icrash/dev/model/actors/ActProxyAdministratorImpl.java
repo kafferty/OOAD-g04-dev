@@ -20,6 +20,8 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCo
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtGeographicalLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.utils.Log4JUtils;
 import lu.uni.lassy.excalibur.examples.icrash.dev.model.Message;
@@ -49,9 +51,16 @@ public class ActProxyAdministratorImpl extends ActProxyAuthenticatedImpl impleme
 	/* (non-Javadoc)
 	 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.environment.actors.ActProxyAdministrator#oeAddCoordinator(lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCoordinatorID, lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin, lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword)
 	 */
-	synchronized public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID, DtLogin aDtLogin, DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber) throws RemoteException, NotBoundException {
+	synchronized public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID, DtLogin aDtLogin, DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber, EtGeographicalLocation aGeLoc, EtCrisisType aCrTy) throws RemoteException, NotBoundException {
 		if(getServerSideActor() !=null)
-			return ((ActAdministrator) getServerSideActor()).oeAddCoordinator(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber);
+			return ((ActAdministrator) getServerSideActor()).oeAddCoordinator(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber, aGeLoc, aCrTy );
+		else
+			return new PtBoolean(false);
+	}
+	
+	synchronized public PtBoolean oeEditCoordinator(DtCoordinatorID aDtCoordinatorID, EtGeographicalLocation aGeLoc, EtCrisisType aCrTy) throws RemoteException, NotBoundException {
+		if(getServerSideActor() !=null)
+			return ((ActAdministrator) getServerSideActor()).oeEditCoordinator(aDtCoordinatorID, aGeLoc, aCrTy );
 		else
 			return new PtBoolean(false);
 	}

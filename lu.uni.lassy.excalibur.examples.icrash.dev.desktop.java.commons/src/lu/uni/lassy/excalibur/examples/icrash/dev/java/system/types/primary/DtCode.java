@@ -35,7 +35,7 @@ public class DtCode implements JIntIs, Serializable{
 				));
 		Logger log = Log4JUtils.getInstance().getLogger();
 		log.info("current time = " + x);
-		Random rnd = new Random(x);
+		Random rnd = new Random();
 		log.info("random has created.. ");
 		functionResults.put(1, new DtReal(new PtReal(Math.cos(Double.valueOf(x)))));
 		functionResults.put(2, new DtReal(new PtReal(Math.sin(Double.valueOf(x)))));

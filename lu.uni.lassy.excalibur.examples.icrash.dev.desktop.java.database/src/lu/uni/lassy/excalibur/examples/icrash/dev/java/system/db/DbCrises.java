@@ -35,6 +35,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPa
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisStatus;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtGeographicalLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDateAndTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtTime;
@@ -356,7 +357,31 @@ public class DbCrises extends DbAbstract {
 					DtPassword aPwd = new DtPassword(new PtString(
 							res.getString("pwd")));
 					DtPhoneNumber aPhN = new DtPhoneNumber(new PtString(res.getString("pn")));
-					aCtCoordinator.init(aId1, aLogin, aPwd, aPhN);
+					
+					EtGeographicalLocation aGeoLoc;
+					if(EtGeographicalLocation.central.name().equals(res.getString("GeoLoc")))
+						aGeoLoc = EtGeographicalLocation.central;
+					else 
+						if (EtGeographicalLocation.north_eastern.name().equals(res.getString("GeoLoc")))
+							aGeoLoc = EtGeographicalLocation.north_eastern;
+						else
+							if (EtGeographicalLocation.north_western.name().equals(res.getString("GeoLoc")))
+								aGeoLoc = EtGeographicalLocation.north_western;
+							else 
+								if (EtGeographicalLocation.south_eastern.name().equals(res.getString("GeoLoc")))
+									aGeoLoc = EtGeographicalLocation.south_eastern;
+								else aGeoLoc = EtGeographicalLocation.south_western;
+					EtCrisisType aCrTy;
+					if(EtCrisisType.critical.name().equals(res.getString("crTy")))
+						aCrTy = EtCrisisType.critical;
+					else
+						if(EtCrisisType.high.name().equals(res.getString("crTy")))
+							aCrTy = EtCrisisType.high;
+						else
+							if(EtCrisisType.medium.name().equals(res.getString("crTy")))
+								aCrTy = EtCrisisType.medium;
+							else aCrTy = EtCrisisType.low;
+					aCtCoordinator.init(aId1, aLogin, aPwd, aPhN,aGeoLoc, aCrTy);
 
 					//add instances to the hash
 					assCtCrisisCtCoordinator.put(aCtCrisis, aCtCoordinator);

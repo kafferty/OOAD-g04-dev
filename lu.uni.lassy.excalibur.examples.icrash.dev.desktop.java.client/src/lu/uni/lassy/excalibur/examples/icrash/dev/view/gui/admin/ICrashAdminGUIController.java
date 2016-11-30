@@ -26,6 +26,8 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.controller.exceptions.ServerOf
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.environment.actors.ActAdministrator;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.design.JIntIsActor;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCoordinatorID;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtGeographicalLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.utils.Log4JUtils;
@@ -34,6 +36,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.view.gui.abstractgui.AbstractA
 import lu.uni.lassy.excalibur.examples.icrash.dev.view.gui.coordinator.CreateICrashCoordGUI;
 import javafx.scene.layout.GridPane;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,6 +48,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -101,7 +105,8 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
     /** The button that shows the controls for deleting a coordinator */
     @FXML
     private Button bttnBottomAdminCoordinatorDeleteACoordinator;
-
+    @FXML
+    private Button bttnBottomAdminCoordinatorEditACoordinator;
     /** The tableview of the recieved messages from the system */
     @FXML
     private TableView<Message> tblvwAdminMessages;
@@ -120,7 +125,10 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
     	showCoordinatorScreen(TypeOfEdit.Add);
     }
     
-    
+    @FXML
+    void bttnBottomAdminCoordinatorEditACoordinator_OnClick(ActionEvent event) {
+    	showCoordinatorScreen(TypeOfEdit.Edit);
+    }
     /**
      * The button event that will show the controls for deleting a coordinator
      *
@@ -177,7 +185,7 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 		
 		/** Adding a coordinator. */
 		Add,
-		
+		Edit,
 		/** Deleting a coordinator. */
 		Delete
 	}
@@ -226,7 +234,7 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 		TextField smsCode = new TextField();
 		smsCode.setPromptText("sms code");
 		
-		grid.add(new Label("Username:"), 0, 0);
+		grid.add(new Label("Sms code:"), 0, 0);
 		grid.add(smsCode, 1, 0);
 
 		dialog.getDialogPane().setContent(grid);
@@ -272,6 +280,8 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 		TextField txtfldUserName = new TextField();
 		TextField txtfldUserPhoneNumber = new TextField();
 		PasswordField psswrdfldPassword = new PasswordField();
+		ComboBox<EtGeographicalLocation> cmbbxGeo = new ComboBox<EtGeographicalLocation>();
+		ComboBox<EtCrisisType> cmbbxCrTy = new ComboBox<EtCrisisType>();
 		txtfldUserID.setPromptText("User ID");
 		Button bttntypOK = null;
 		GridPane grdpn = new GridPane();
@@ -282,10 +292,22 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 			txtfldUserName.setPromptText("User name");
 			psswrdfldPassword.setPromptText("Password");
 			txtfldUserPhoneNumber.setPromptText("Phone number");
+			cmbbxGeo.setItems( FXCollections.observableArrayList( EtGeographicalLocation.values()));
+			cmbbxCrTy.setItems(FXCollections.observableArrayList( EtCrisisType.values()));
 			grdpn.add(txtfldUserName, 1, 2);
 			grdpn.add(psswrdfldPassword, 1, 3);
 			grdpn.add(txtfldUserPhoneNumber, 1, 4);
 			grdpn.add(bttntypOK, 1, 5);
+			grdpn.add(cmbbxGeo, 2, 1);
+			grdpn.add(cmbbxCrTy, 2, 2);
+			break;
+		case Edit:
+			bttntypOK = new Button("Edit");
+			cmbbxGeo.setItems( FXCollections.observableArrayList( EtGeographicalLocation.values()));
+			cmbbxCrTy.setItems(FXCollections.observableArrayList( EtCrisisType.values()));
+			grdpn.add(bttntypOK, 1, 5);
+			grdpn.add(cmbbxGeo, 2, 1);
+			grdpn.add(cmbbxCrTy, 2, 2);
 			break;
 		case Delete:
 			bttntypOK = new Button("Delete");
@@ -303,12 +325,25 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 						DtCoordinatorID coordID = new DtCoordinatorID(new PtString(txtfldUserID.getText()));
 						switch(type){
 						case Add:
-							if (userController.oeAddCoordinator(txtfldUserID.getText(), txtfldUserName.getText(), psswrdfldPassword.getText(), txtfldUserPhoneNumber.getText()).getValue()){
+							if (userController.oeAddCoordinator(txtfldUserID.getText(), txtfldUserName.getText(), psswrdfldPassword.getText(), txtfldUserPhoneNumber.getText(), cmbbxGeo.getValue().name(), cmbbxCrTy.getValue().name()).getValue()){
 								listOfOpenWindows.add(new CreateICrashCoordGUI(coordID, systemstateController.getActCoordinator(txtfldUserName.getText())));
 								anchrpnCoordinatorDetails.getChildren().remove(grdpn);
 							}
 							else
 								showErrorMessage("Unable to add coordinator", "An error occured when adding the coordinator");
+							break;
+						case Edit:
+//							int counter = 0;
+//							for(CreateICrashCoordGUI window : listOfOpenWindows){
+//								if (window.getDtCoordinatorID().value.getValue().equals(coordID.value.getValue()))
+//									counter ++;
+//							}
+//							if (counter == 0)
+								if (userController.oeEditCoordinator(txtfldUserID.getText(),cmbbxGeo.getValue().name(), cmbbxCrTy.getValue().name()).getValue()) {
+									anchrpnCoordinatorDetails.getChildren().remove(grdpn);
+								}
+								else
+									showErrorMessage("Unable to edit coordinator", "Probably the coordinator is currently logged in");
 							break;
 						case Delete:
 							if (userController.oeDeleteCoordinator(txtfldUserID.getText()).getValue()){
@@ -344,14 +379,7 @@ public class ICrashAdminGUIController extends AbstractAuthGUIController {
 		if(txtfldAdminUserName.getText().length() > 0 && psswrdfldAdminPassword.getText().length() > 0){
 			try {
 				if (userController.oeLogin(txtfldAdminUserName.getText(), psswrdfldAdminPassword.getText()).getValue()) {
-					//logonShowPanes(true);
-					smsCodePanes();
-//				if(dialog.getResult() != null)
-//					if (dialog.getResult().length() > 0)
-//						if (userController.oeSms(dialog.getResult()).getValue()){
-//							smsCodePanes(true);
-//							logonShowPanes(true);
-//						}		
+					smsCodePanes();		
 				}
 			}
 			catch (ServerOfflineException | ServerNotBoundException e) {

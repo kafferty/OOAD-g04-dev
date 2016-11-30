@@ -25,6 +25,10 @@ public class CtCoordinator extends CtAuthenticated {
 
 	/** The id of the coordinator. */
 	public DtCoordinatorID id;
+	
+	public EtCrisisType crisisType;
+	
+	public EtGeographicalLocation geographicalLocation;
 		
 	/**
 	 * Initialises the coordinator.
@@ -34,9 +38,11 @@ public class CtCoordinator extends CtAuthenticated {
 	 * @param aPwd The password of the coordinator
 	 * @return The success of the initialisation
 	 */
-	public PtBoolean init(DtCoordinatorID aId, DtLogin aLogin,DtPassword aPwd, DtPhoneNumber aPhNb){
+	public PtBoolean init(DtCoordinatorID aId, DtLogin aLogin,DtPassword aPwd, DtPhoneNumber aPhNb, EtGeographicalLocation aGeLoc, EtCrisisType aCrTy){
 			super.init(aLogin, aPwd, aPhNb);
 			id = aId;
+			geographicalLocation = aGeLoc;
+			crisisType = aCrTy;
 			return new PtBoolean(true); 
 	}
 	

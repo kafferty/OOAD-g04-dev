@@ -30,6 +30,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.CtAl
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.CtCrisis;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtAlertStatus;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisStatus;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.utils.Log4JUtils;
 import lu.uni.lassy.excalibur.examples.icrash.dev.model.Message;
@@ -134,7 +135,8 @@ public class ICrashCoordGUIController extends AbstractAuthGUIController {
     /** The button that allows a user to change the status of a crisis. */
     @FXML
     private Button bttnChangeStatusCrisis;
-
+    @FXML
+    private Button bttnChangeCrisisType;
     /** The combobox that allows a user to select which crisis status type to view. */
     @FXML
     private ComboBox<EtCrisisStatus> cmbbxCrisisStatus;
@@ -160,7 +162,10 @@ public class ICrashCoordGUIController extends AbstractAuthGUIController {
     void bttnChangeStatusCrisis_OnClick(ActionEvent event) {
     	changeCrisisStatus();
     }
-
+    @FXML
+    void bttnChangeCrisisType_OnClick(ActionEvent event) {
+    	changeCrisisType();
+    }
     /**
      * Button event that deals with closing a crisis
      *
@@ -414,6 +419,53 @@ public class ICrashCoordGUIController extends AbstractAuthGUIController {
 		populateCrisis();
 	}
 	
+	private void changeCrisisType(){
+		CtCrisis crisis = (CtCrisis)getObjectFromTableView(tblvwCrisis);
+		if (crisis != null){
+			Dialog<PtBoolean> dialog = new Dialog<PtBoolean>();
+			dialog.setTitle("Change the crisis type");
+			TextField txtfldCtCrisisID = new TextField();
+			txtfldCtCrisisID.setText(crisis.id.value.getValue());
+			txtfldCtCrisisID.setDisable(true);
+			ComboBox<EtCrisisType> cmbbx = new ComboBox<EtCrisisType>();
+			cmbbx.setItems( FXCollections.observableArrayList( EtCrisisType.values()));
+			cmbbx.setValue(crisis.type);
+			ButtonType bttntypOK = new ButtonType("Change type", ButtonData.OK_DONE);
+			ButtonType bttntypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+			GridPane grdpn = new GridPane();
+			grdpn.add(txtfldCtCrisisID, 1, 1);
+			grdpn.add(cmbbx, 1, 2);
+			dialog.getDialogPane().setContent(grdpn);
+			dialog.getDialogPane().getButtonTypes().add(bttntypeCancel);
+			dialog.getDialogPane().getButtonTypes().add(bttntypOK);
+			dialog.setResultConverter(new Callback<ButtonType, PtBoolean>(){
+				@Override
+				public PtBoolean call(ButtonType param) {
+					if (param.getButtonData() == ButtonData.OK_DONE && checkIfAllDialogHasBeenFilledIn(grdpn)){
+						try {
+							return userController.changeCrisisType(crisis.id.value.getValue(), cmbbx.getValue());
+						} catch (ServerOfflineException | ServerNotBoundException e) {
+							showServerOffLineMessage(e);
+						} catch (IncorrectFormatException e) {
+							showWarningIncorrectInformationEntered(e);
+						}
+					}
+					//User cancelled the dialog
+					return new PtBoolean(true);
+				}
+			});
+			dialog.initOwner(window);
+			dialog.initModality(Modality.WINDOW_MODAL);
+			Optional<PtBoolean> result = dialog.showAndWait();
+			if (result.isPresent()){
+				if (!result.get().getValue())
+					showWarningMessage("Unable to change Type of crisis", "Unable to change type of crisis, please try again");
+			}
+		}
+		populateCrisis();
+		populateAlerts();
+	}
+	
 	/**
 	 * Runs the function that will allow the current user to validate the selected alert.
 	 */
@@ -608,7 +660,7 @@ public class ICrashCoordGUIController extends AbstractAuthGUIController {
 		TextField smsCode = new TextField();
 		smsCode.setPromptText("sms code");
 		
-		grid.add(new Label("Username:"), 0, 0);
+		grid.add(new Label("Sms code:"), 0, 0);
 		grid.add(smsCode, 1, 0);
 
 		dialog.getDialogPane().setContent(grid);

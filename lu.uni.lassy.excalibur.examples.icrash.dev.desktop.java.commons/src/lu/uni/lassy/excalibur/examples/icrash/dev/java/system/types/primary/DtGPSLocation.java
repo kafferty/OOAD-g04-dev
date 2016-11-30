@@ -101,6 +101,30 @@ public class DtGPSLocation implements Serializable, JIntIs {
 				return new PtBoolean(false);
 		}
 		
+		
+		public EtGeographicalLocation getGeographicalLocation(DtLatitude aLatitude, DtLongitude aLongitude) {
+			double lat1,lat2,long1,long2,dist;
+			lat1 = 59.581475;
+			lat2 = aLatitude.value.getValue();
+			long1 = 30.120665;
+			long2 = aLongitude.value.getValue();
+			dist = distanceBetweenTwoLocationsInKm(lat1,long1,lat2,long2);
+			if(dist * 1000 <= 7400)
+				return EtGeographicalLocation.central;
+			else
+				if((lat2 > lat1) && (long2 > long1))
+					return EtGeographicalLocation.north_eastern;
+				else
+					if((lat2 > lat1) && (long2 < long1))
+						return EtGeographicalLocation.north_western;
+					else
+						if((lat2 < lat1) && (long2 < long1))
+							return EtGeographicalLocation.south_western;
+						else
+							return EtGeographicalLocation.south_eastern;
+		}
+		
+		
 		/* (non-Javadoc)
 		 * @see lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.design.DtIs#getExpectedDataStructure()
 		 */

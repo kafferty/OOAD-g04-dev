@@ -41,6 +41,8 @@ public class CtAlert implements Serializable {
 	
 	/** The comment associated with the alert. */
 	public DtComment comment;
+	
+	public EtCrisisType crisisType;
 
 	/**
 	 * Initialises the alert.
@@ -53,13 +55,14 @@ public class CtAlert implements Serializable {
 	 * @return the success of the initialisation of the alert
 	 */
 	public PtBoolean init(DtAlertID aId, EtAlertStatus aStatus,
-			DtGPSLocation aLocation, DtDateAndTime aInstant, DtComment aComment) {
+			DtGPSLocation aLocation, DtDateAndTime aInstant, DtComment aComment, EtCrisisType aCrisisType) {
 			
 		id = aId;
 		status = aStatus;
 		location = aLocation;
 		instant = aInstant;
 		comment = aComment;
+		crisisType = aCrisisType;
 		return new PtBoolean(true);
 	}
 

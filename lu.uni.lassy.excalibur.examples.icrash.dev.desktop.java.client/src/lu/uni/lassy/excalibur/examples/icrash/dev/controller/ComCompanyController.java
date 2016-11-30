@@ -28,6 +28,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtGP
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLatitude;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLongitude;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtHumanKind;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.DtDay;
@@ -105,7 +106,7 @@ public class ComCompanyController implements HasListeners{
 	 * @throws StringToNumberException the string to number exception
 	 */
 	public PtBoolean oeAlert(EtHumanKind aEtHumanKind, int year, int month, int day, int hour, int minute, int second,
-			String phoneNumber, String latitude, String longitude, String comment) throws ServerOfflineException, InvalidHumanKindException, ServerNotBoundException, IncorrectFormatException, StringToNumberException{
+			String phoneNumber, String latitude, String longitude, String comment, EtCrisisType aEtcrisisType) throws ServerOfflineException, InvalidHumanKindException, ServerNotBoundException, IncorrectFormatException, StringToNumberException{
 		try {
 			if (aActProxyComCompany == null)
 				return new PtBoolean(false);
@@ -122,7 +123,8 @@ public class ComCompanyController implements HasListeners{
 			ht.put(aEtHumanKind, aEtHumanKind.name());
 			ht.put(aDtPhoneNumber, aDtPhoneNumber.value.getValue());
 			ht.put(aDtComment, aDtComment.value.getValue());
-			return aActProxyComCompany.oeAlert(aEtHumanKind, aDtDate, aDtTime, aDtPhoneNumber, aDtGPSLocation, aDtComment);
+			ht.put(aEtcrisisType, aEtcrisisType.name());
+			return aActProxyComCompany.oeAlert(aEtHumanKind, aDtDate, aDtTime, aDtPhoneNumber, aDtGPSLocation, aDtComment, aEtcrisisType);
 		} catch (RemoteException e) {
 			Log4JUtils.getInstance().getLogger().error(e);
 			throw new ServerOfflineException();

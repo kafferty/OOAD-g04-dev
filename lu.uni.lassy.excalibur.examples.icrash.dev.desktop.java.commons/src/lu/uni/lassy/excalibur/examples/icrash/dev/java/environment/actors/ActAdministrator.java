@@ -19,6 +19,8 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtCo
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.DtPhoneNumber;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtCrisisType;
+import lu.uni.lassy.excalibur.examples.icrash.dev.java.system.types.primary.EtGeographicalLocation;
 import lu.uni.lassy.excalibur.examples.icrash.dev.java.types.stdlib.PtBoolean;
 
 /**
@@ -37,9 +39,10 @@ public interface ActAdministrator extends ActAuthenticated {
 	 * @throws NotBoundException Thrown if the server has not been bound correctly in RMI settings
 	 */
 	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID,
-			DtLogin aDtLogin, DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber) throws RemoteException,
+			DtLogin aDtLogin, DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber, EtGeographicalLocation aGeLoc, EtCrisisType aCrTy) throws RemoteException,
 			NotBoundException;
-
+	
+	public PtBoolean oeEditCoordinator(DtCoordinatorID aDtCoordinatorID, EtGeographicalLocation aGeLoc, EtCrisisType aCrTy) throws RemoteException, NotBoundException;
 	/**
 	 * Delete a coordinator to the system, using the parameters passed.
 	 *
