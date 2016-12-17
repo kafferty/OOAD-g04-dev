@@ -102,26 +102,28 @@ public class DtGPSLocation implements Serializable, JIntIs {
 		}
 		
 		
-		public EtGeographicalLocation getGeographicalLocation(DtLatitude aLatitude, DtLongitude aLongitude) {
+		public PtBoolean getGeographicalLocation(EtGeographicalLocation etGeographicalLocation) {
 			double lat1,lat2,long1,long2,dist;
 			lat1 = 59.581475;
-			lat2 = aLatitude.value.getValue();
+			lat2 = this.latitude.value.getValue();;
 			long1 = 30.120665;
-			long2 = aLongitude.value.getValue();
+			long2 = this.longitude.value.getValue();
 			dist = distanceBetweenTwoLocationsInKm(lat1,long1,lat2,long2);
+			EtGeographicalLocation geographicalLocation = null;
 			if(dist * 1000 <= 7400)
-				return EtGeographicalLocation.central;
+				geographicalLocation = EtGeographicalLocation.central;
 			else
 				if((lat2 > lat1) && (long2 > long1))
-					return EtGeographicalLocation.north_eastern;
+					geographicalLocation = EtGeographicalLocation.north_eastern;
 				else
 					if((lat2 > lat1) && (long2 < long1))
-						return EtGeographicalLocation.north_western;
+						geographicalLocation = EtGeographicalLocation.north_western;
 					else
 						if((lat2 < lat1) && (long2 < long1))
-							return EtGeographicalLocation.south_western;
+							geographicalLocation = EtGeographicalLocation.south_western;
 						else
-							return EtGeographicalLocation.south_eastern;
+							geographicalLocation = EtGeographicalLocation.south_eastern;
+			return (geographicalLocation.toString() == etGeographicalLocation.toString()) ? new PtBoolean(true) : new PtBoolean(false);
 		}
 		
 		

@@ -35,6 +35,7 @@ CREATE TABLE `alerts` (
 	  `comment` varchar(80) DEFAULT NULL,
   `crisis` varchar(80) DEFAULT NULL,
   `human` varchar(80) DEFAULT NULL,
+  `crisisTy` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -92,6 +93,8 @@ CREATE TABLE `coordinators` (
   `login` varchar(80) DEFAULT NULL,
   `pwd` varchar(80) DEFAULT NULL,
   `pn` varchar(80) DEFAULT NULL,
+  `geoLoc` varchar(80) DEFAULT NULL,
+  `crTy` varchar(80) DEFAULT NULL,
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

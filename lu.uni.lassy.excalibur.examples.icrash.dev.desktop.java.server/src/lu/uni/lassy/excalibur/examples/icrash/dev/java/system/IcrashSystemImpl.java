@@ -128,7 +128,8 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 	
 	/**  A hashtable of the joint class coordinators and actors coordiantors in the system, stored by their class type. */
 	Hashtable<CtCoordinator, ActCoordinator> assCtCoordinatorActCoordinator = new Hashtable<CtCoordinator, ActCoordinator>();
-	Hashtable<String, String[]> assCoordLoginCoordExpertiseDomain = new Hashtable<String, String[]>();
+	Hashtable<String, String> assCoordLoginCoordCrisisType = new Hashtable<String, String>();
+	Hashtable<String, EtGeographicalLocation> assCoordLoginGeogLoc = new Hashtable<String, EtGeographicalLocation>();
 	/**  A hashtable of the joint crises and coordinators in the system, stored by their crisis as a key. */
 	Hashtable<CtCrisis, CtCoordinator> assCtCrisisCtCoordinator = new Hashtable<CtCrisis, CtCoordinator>();
 	
@@ -608,7 +609,8 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 				assCtAuthenticatedActAuthenticated.put(ctCoord, actCoord);
 				assCtCoordinatorActCoordinator.put(ctCoord, actCoord);
 				String[] expertiseDomain = {ctCoord.crisisType.toString(), ctCoord.geographicalLocation.toString()};
-				assCoordLoginCoordExpertiseDomain.put(ctCoord.login.value.getValue(), expertiseDomain);
+				assCoordLoginCoordCrisisType.put(ctCoord.login.value.getValue(), ctCoord.crisisType.toString());
+				assCoordLoginGeogLoc.put(ctCoord.login.value.getValue(), ctCoord.geographicalLocation);
 			}
 			assCtAlertCtCrisis = DbAlerts.getAssCtAlertCtCrisis();
 			assCtAlertCtHuman = DbAlerts.getAssCtAlertCtHuman();
@@ -670,7 +672,6 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 			aCtAlert.init(aId, aStatus, aDtGPSLocation, aInstant, aDtComment, aEtCrisisType);
 			//DB: insert alert in the database
 			DbAlerts.insertAlert(aCtAlert);
-	
 			//PostF3
 			boolean existsNear = false;
 			CtCrisis aCtCrisis = new CtCrisis();
@@ -1015,8 +1016,8 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 					Logger log = Log4JUtils.getInstance().getLogger();
 					log.info("login :"+ aActCoordinator.getLogin().value.getValue());
 					if (crisis.status.toString().equals(aEtCrisisStatus.toString()) && 
-							crisis.type.toString().equals(assCoordLoginCoordExpertiseDomain.get(aActCoordinator.getLogin().value.getValue())[0]) &&
-							crisis.location.getGeographicalLocation(crisis.location.latitude, crisis.location.longitude).toString().equals(assCoordLoginCoordExpertiseDomain.get(aActCoordinator.getLogin().value.getValue())[1]))
+							crisis.type.toString().equals(assCoordLoginCoordCrisisType.get(aActCoordinator.getLogin().value.getValue())) &&
+							crisis.location.getGeographicalLocation(assCoordLoginGeogLoc.get(aActCoordinator.getLogin().value.getValue())).getValue())
 						//PostF1
 						crisis.isSentToCoordinator(aActCoordinator);
 				}
@@ -1047,8 +1048,8 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 					Logger log = Log4JUtils.getInstance().getLogger();
 					//log.info("Allerererer csidisisi: " + assCoordLoginCoordType.get(theActCoordinator).crisisType.toString());
 					if (theCtAlert.status.equals(aEtAlertStatus) && 
-							theCtAlert.crisisType.toString().equals(assCoordLoginCoordExpertiseDomain.get(theActCoordinator.getLogin().value.getValue())[0]) &&
-							theCtAlert.location.getGeographicalLocation(theCtAlert.location.latitude, theCtAlert.location.longitude).toString().equals(assCoordLoginCoordExpertiseDomain.get(theActCoordinator.getLogin().value.getValue())[1]))
+							theCtAlert.crisisType.toString().equals(assCoordLoginCoordCrisisType.get(theActCoordinator.getLogin().value.getValue())) &&
+							theCtAlert.location.getGeographicalLocation(assCoordLoginGeogLoc.get(theActCoordinator.getLogin().value.getValue())).getValue())
 						try {
 							//PostF1
 							theCtAlert.isSentToCoordinator(theActCoordinator);
@@ -1278,7 +1279,8 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 			assCtCoordinatorActCoordinator.put(ctCoordinator, actCoordinator);
 			//PostF5
 			String[] expertiseDomain = {ctCoordinator.crisisType.toString(), ctCoordinator.geographicalLocation.toString()};
-			assCoordLoginCoordExpertiseDomain.put(ctCoordinator.login.value.getValue(), expertiseDomain);
+			assCoordLoginCoordCrisisType.put(ctCoordinator.login.value.getValue(), ctCoordinator.crisisType.toString());
+			assCoordLoginGeogLoc.put(ctCoordinator.login.value.getValue(), ctCoordinator.geographicalLocation);
 			ActAdministrator admin = (ActAdministrator) currentRequestingAuthenticatedActor;
 			admin.ieCoordinatorAdded();
 		} catch (Exception ex) {
@@ -1303,8 +1305,10 @@ public class IcrashSystemImpl extends UnicastRemoteObject implements
 				aCtCoordinator.crisisType = aCrTy;
 				aCtCoordinator.geographicalLocation = aGeLoc;
 				String[] newExpertiseDomain = {aCrTy.toString(), aGeLoc.toString()};
-				assCoordLoginCoordExpertiseDomain.remove(aCtCoordinator.login.value.getValue());
-				assCoordLoginCoordExpertiseDomain.put(aCtCoordinator.login.value.getValue(), newExpertiseDomain);
+				assCoordLoginCoordCrisisType.remove(aCtCoordinator.login.value.getValue());
+				assCoordLoginGeogLoc.remove(aCtCoordinator.login.value.getValue());
+				assCoordLoginCoordCrisisType.put(aCtCoordinator.login.value.getValue(), aCrTy.toString());
+				assCoordLoginGeogLoc.put(aCtCoordinator.login.value.getValue(), aGeLoc);
 				DbCoordinators.updateCoordinator(aCtCoordinator);
 				//PostF1
 				ActAdministrator admin = (ActAdministrator) currentRequestingAuthenticatedActor;
